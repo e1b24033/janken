@@ -64,22 +64,39 @@ public class JankenController {
   }
 
   @GetMapping("/fight")
-  public String fight(@RequestParam("hand") String hand, Principal principal, ModelMap model) {
+  public String fight(@RequestParam("id") int id,@RequestParam("hand") String hand, Principal principal, ModelMap model) {
     String loginUser = principal.getName();
-    entry.addUser(loginUser);
+    /*entry.addUser(loginUser);
 
     ArrayList<User> users = userMapper.selectAllUsers();
     model.addAttribute("users", users);
 
     ArrayList<Match> matches = matchMapper.selectAllMatches();
     model.addAttribute("matches", matches);
+    */
+    model.addAttribute("loginUser", loginUser);
+
+    User loginUserObj = userMapper.selectByName(loginUser);
+    User opponent = userMapper.selectById(id);
+    model.addAttribute("opponent", opponent);
 
     Janken janken = new Janken(hand);
-    model.addAttribute("loginUser", loginUser);
-    model.addAttribute("room", entry);
+    String cpuHand = janken.getCpuHand();
+
+    //model.addAttribute("room", entry);
+
+    Match match = new Match();
+    match.setUser1(loginUserObj.getId());
+    match.setUser2(opponent.getId());
+    match.setUser1Hand(hand);
+    match.setUser2Hand(cpuHand);
+    matchMapper.insertMatch(match);
+
     model.addAttribute("playerHand", janken.getPlayerHand());
-    model.addAttribute("cpuHand", janken.getCpuHand());
+    model.addAttribute("cpuHand", cpuHand);
     model.addAttribute("result", janken.getResult());
-    return "janken";
+
+    //return "janken";
+    return "match";
   }
 }
