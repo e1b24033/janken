@@ -7,16 +7,16 @@ public class Janken {
 
   public Janken(String playerHand) {
     this.playerHand = playerHand;
-    this.cpuHand = "グー";
+    this.cpuHand = "Gu";
     determineResult();
   }
 
   public void determineResult() {
     if (playerHand.equals(cpuHand)) {
       this.result = "あいこ";
-    } else if ((playerHand.equals("グー") && cpuHand.equals("チョキ")) ||
-        (playerHand.equals("チョキ") && cpuHand.equals("パー")) ||
-        (playerHand.equals("パー") && cpuHand.equals("グー"))) {
+    } else if ((playerHand.equals("Gu") && cpuHand.equals("Choki")) ||
+        (playerHand.equals("Choki") && cpuHand.equals("Pa")) ||
+        (playerHand.equals("Pa") && cpuHand.equals("Gu"))) {
       this.result = "あなたの勝ち";
     } else {
       this.result = "あなたの負け";

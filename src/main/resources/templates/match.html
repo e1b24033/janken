@@ -18,6 +18,21 @@
     <span th:text="${loginUser}"></span> vs <span th:text="${opponent.name}"></span>
   </p>
 
+  <div th:unless="${playerHand}">
+    <p>手を選んでください</p>
+    <p>
+      <a th:href="@{/fight(id=${opponent.id}, hand='Gu')}">Gu</a> |
+      <a th:href="@{/fight(id=${opponent.id}, hand='Choki')}">Choki</a> |
+      <a th:href="@{/fight(id=${opponent.id}, hand='Pa')}">Pa</a>
+    </p>
+  </div>
+
+  <div th:if="${playerHand}">
+    <p>あなたの手: <span th:text="${playerHand}"></span></p>
+    <p>相手の手: <span th:text="${cpuHand}"></span></p>
+    <p>結果: <span th:text="${result}"></span></p>
+  </div>
+
   <p>
     <a href="/janken">もどる</a>
   </p>
