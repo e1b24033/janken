@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>Janken Match</title>
+</head>
+
+<body>
+
+  <p>
+    <a href="/logout">ログアウト</a>
+  </p>
+
+  <h1>Match</h1>
+
+  <p>
+    <span th:text="${loginUser}"></span> vs <span th:text="${opponent.name}"></span>
+  </p>
+
+  <p>
+    <a href="/janken">もどる</a>
+  </p>
+
+</body>
+
+</html>

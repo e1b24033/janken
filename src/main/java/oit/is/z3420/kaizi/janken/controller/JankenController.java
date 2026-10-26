@@ -53,6 +53,16 @@ public class JankenController {
     return "janken";
   }
 
+  @GetMapping("/match")
+  public String matchGet(@RequestParam("id") int id, Principal principal, ModelMap model) {
+    String loginUser = principal.getName();
+    model.addAttribute("loginUser", loginUser);
+    User opponent = userMapper.selectById(id);
+    model.addAttribute("opponent", opponent);
+
+    return "match";
+  }
+
   @GetMapping("/fight")
   public String fight(@RequestParam("hand") String hand, Principal principal, ModelMap model) {
     String loginUser = principal.getName();
