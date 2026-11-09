@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 //import org.springframework.ui.ModelMap;
 
 import oit.is.z3420.kaizi.janken.model.Entry;
-import oit.is.z3420.kaizi.janken.model.Janken;
+//import oit.is.z3420.kaizi.janken.model.Janken;
 import oit.is.z3420.kaizi.janken.model.Match;
+import oit.is.z3420.kaizi.janken.model.MatchInfo;
+import oit.is.z3420.kaizi.janken.model.MatchInfoMapper;
 import oit.is.z3420.kaizi.janken.model.MatchMapper;
 import oit.is.z3420.kaizi.janken.model.User;
 import oit.is.z3420.kaizi.janken.model.UserMapper;
@@ -29,6 +31,9 @@ public class JankenController {
   @Autowired
   private MatchMapper matchMapper;
 
+  @Autowired
+  private MatchInfoMapper matchInfoMapper;
+
   @GetMapping("/janken")
   public String jankenGet(Principal principal, ModelMap model) {
     String loginUser = principal.getName();
@@ -39,6 +44,11 @@ public class JankenController {
     model.addAttribute("users", users);
     ArrayList<Match> matches = matchMapper.selectAllMatches();
     model.addAttribute("matches", matches);
+
+    ArrayList<MatchInfo> activeMatches = matchInfoMapper.selectActiveMatchInfo();
+    model.addAttribute("activeMatches", activeMatches);
+
+
     return "janken";
   }
 
@@ -80,7 +90,7 @@ public class JankenController {
     User opponent = userMapper.selectById(id);
     model.addAttribute("opponent", opponent);
 
-    Janken janken = new Janken(hand);
+    /*Janken janken = new Janken(hand);
     String cpuHand = janken.getCpuHand();
 
     //model.addAttribute("room", entry);
@@ -97,6 +107,15 @@ public class JankenController {
     model.addAttribute("result", janken.getResult());
 
     //return "janken";
-    return "match";
+    return "match";*/
+
+    MatchInfo matchInfo = new MatchInfo();
+    matchInfo.setUser1(loginUserObj.getId());
+    matchInfo.setUser2(opponent.getId());
+    matchInfo.setUser1Hand(hand);
+    matchInfo.setIsActive(true);
+    matchInfoMapper.insertMatchInfo(matchInfo);
+
+    return "wait";
   }
 }
