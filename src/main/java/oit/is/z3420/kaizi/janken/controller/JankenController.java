@@ -109,13 +109,29 @@ public class JankenController {
     //return "janken";
     return "match";*/
 
-    MatchInfo matchInfo = new MatchInfo();
-    matchInfo.setUser1(loginUserObj.getId());
-    matchInfo.setUser2(opponent.getId());
-    matchInfo.setUser1Hand(hand);
-    matchInfo.setIsActive(true);
-    matchInfoMapper.insertMatchInfo(matchInfo);
+    MatchInfo existingMatchInfo = matchInfoMapper.selectByUsers(opponent.getId(), loginUserObj.getId());
 
-    return "wait";
+    if (existingMatchInfo != null) {
+      matchInfoMapper.updateIsActiveToFalse(existingMatchInfo.getId());
+
+      Match match = new Match();
+      match.setUser1(existingMatchInfo.getUser1());
+      match.setUser2(loginUserObj.getId());
+      match.setUser1Hand(existingMatchInfo.getUser1Hand());
+      match.setUser2Hand(hand);
+      match.setIsActive(true);
+      matchMapper.insertMatch(match);
+
+      return "redirect:/janken";
+    } else {
+      MatchInfo matchInfo = new MatchInfo();
+      matchInfo.setUser1(loginUserObj.getId());
+      matchInfo.setUser2(opponent.getId());
+      matchInfo.setUser1Hand(hand);
+      matchInfo.setIsActive(true);
+      matchInfoMapper.insertMatchInfo(matchInfo);
+
+      return "wait";
+    }
   }
 }
