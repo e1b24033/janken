@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 //import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import oit.is.z3420.kaizi.janken.model.Entry;
 //import oit.is.z3420.kaizi.janken.model.Janken;
@@ -19,6 +20,7 @@ import oit.is.z3420.kaizi.janken.model.MatchInfoMapper;
 import oit.is.z3420.kaizi.janken.model.MatchMapper;
 import oit.is.z3420.kaizi.janken.model.User;
 import oit.is.z3420.kaizi.janken.model.UserMapper;
+import oit.is.z3420.kaizi.janken.service.AsyncKekka;
 
 @Controller
 public class JankenController {
@@ -33,6 +35,9 @@ public class JankenController {
 
   @Autowired
   private MatchInfoMapper matchInfoMapper;
+
+  @Autowired
+  private AsyncKekka asyncKekka;
 
   @GetMapping("/janken")
   public String jankenGet(Principal principal, ModelMap model) {
@@ -74,7 +79,8 @@ public class JankenController {
   }
 
   @GetMapping("/fight")
-  public String fight(@RequestParam("id") int id,@RequestParam("hand") String hand, Principal principal, ModelMap model) {
+  public String fight(@RequestParam("id") int id, @RequestParam("hand") String hand, Principal principal,
+      ModelMap model) {
     String loginUser = principal.getName();
     /*entry.addUser(loginUser);
 
@@ -112,6 +118,7 @@ public class JankenController {
     MatchInfo existingMatchInfo = matchInfoMapper.selectByUsers(opponent.getId(), loginUserObj.getId());
 
     if (existingMatchInfo != null) {
+
       matchInfoMapper.updateIsActiveToFalse(existingMatchInfo.getId());
 
       Match match = new Match();
@@ -119,7 +126,9 @@ public class JankenController {
       match.setUser2(loginUserObj.getId());
       match.setUser1Hand(existingMatchInfo.getUser1Hand());
       match.setUser2Hand(hand);
+
       match.setIsActive(true);
+
       matchMapper.insertMatch(match);
 
       return "redirect:/janken";
@@ -133,5 +142,16 @@ public class JankenController {
 
       return "wait";
     }
+  }
+
+  @GetMapping("/wait")
+  public SseEmitter waitStep1() {
+    final SseEmitter emitter = new SseEmitter(60000L);
+    try {
+      asyncKekka.asyncKekka(emitter);
+    } catch (Exception e) {
+      emitter.completeWithError(e);
+    }
+    return emitter;
   }
 }
