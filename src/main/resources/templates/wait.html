@@ -4,6 +4,27 @@
 <head>
   <meta charset="utf-8">
   <title>Wait for Opponent</title>
+  <script>
+    window.onload = function () {
+
+      const sse = new EventSource('/wait');
+
+      sse.onmessage = function (event) {
+        console.log(event.data);
+        const matches = JSON.parse(event.data);
+
+        let resultHtml = "<h3>対戦結果</h3><ul>";
+        for (let i = 0; i < matches.length; i++) {
+          resultHtml += "<li>user1: " + matches[i].user1 + " (手: " + matches[i].user1Hand + ") vs " +
+            "user2: " + matches[i].user2 + " (手: " + matches[i].user2Hand + ")</li>";
+        }
+        resultHtml += "</ul>";
+        resultHtml += '<p><a href="/janken">[戻る]</a></p>';
+
+        document.getElementById("result_area").innerHTML = resultHtml;
+      };
+    };
+  </script>
 </head>
 
 <body>
@@ -19,6 +40,8 @@
   </div>
 
   <p>相手の手を待ってます</p>
+
+  <div id="result_area"></div>
 
   <p>
     <a href="/janken">もどる</a>
